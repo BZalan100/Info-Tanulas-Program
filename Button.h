@@ -24,7 +24,7 @@ class Button
     bool pressed = false;
     std::function<void()> onClick;
     SDL_Texture* texture = NULL;
-    
+    SDL_FlipMode flip_mode;
 public:
     Button()
     {
@@ -38,6 +38,7 @@ public:
         pressed = false;
         onClick = [](){};
         texture = NULL;
+        flip_mode = SDL_FLIP_NONE;
     }
     void draw(SDL_Renderer* renderer)
     {
@@ -112,11 +113,15 @@ public:
     {
         texture = t;
     }
+    void setFlipMode(SDL_FlipMode f)
+    {
+        flip_mode = f;
+    }
     void renderButton(SDL_Renderer* r)
     {
         if (texture == NULL) return;
         color_normal.a = color_hover.a = color_pressed.a = 0; 
-        SDL_RenderTexture(r, texture, NULL, &rect);
+        SDL_RenderTextureRotated(r, texture, NULL, &rect, 0.0, nullptr, flip_mode);
     }
     void hide()
     {

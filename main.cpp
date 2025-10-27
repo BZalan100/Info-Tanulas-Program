@@ -30,8 +30,6 @@ constexpr short DEFINITION_COUNT = 56;
 constexpr short PROGRAMS_COUNT = 24;
 constexpr std::string_view HIDDEN_TEXT = "#- ide lehet irni -#";
 
-SDL_Texture* switch_left_texture = nullptr, *switch_right_texture = nullptr, *button_texture = nullptr;
-
 std::array<Button, DEFINITION_COUNT> def_buttons;
 std::array<Button, PROGRAMS_COUNT+4> prog_buttons;
 Button definitions_button, programs_button, back_button,
@@ -291,17 +289,18 @@ void setUpPrograms()
 
 void setAllButtonTextures()
 {
-    definitions_button.setTexture(button_texture);
-    programs_button.setTexture(button_texture);
-    back_button.setTexture(button_texture);
-    hint_button.setTexture(button_texture);
-    show_colors_button.setTexture(button_texture);
-    switch_right_button.setTexture(switch_right_texture);
-    switch_left_button.setTexture(switch_left_texture);
+    definitions_button.setTexture(GraphicsManager::instance().get_button_texture());
+    programs_button.setTexture(GraphicsManager::instance().get_button_texture());
+    back_button.setTexture(GraphicsManager::instance().get_button_texture());
+    hint_button.setTexture(GraphicsManager::instance().get_button_texture());
+    show_colors_button.setTexture(GraphicsManager::instance().get_button_texture());
+    switch_right_button.setTexture(GraphicsManager::instance().get_switch_texture());
+    switch_left_button.setTexture(GraphicsManager::instance().get_switch_texture());
+    switch_left_button.setFlipMode(SDL_FLIP_HORIZONTAL);
     for (int i = 0; i < DEFINITION_COUNT; i++)
-        def_buttons[i].setTexture(button_texture);
+        def_buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
     for (int i = 0; i < PROGRAMS_COUNT + 4; i++)
-        prog_buttons[i].setTexture(button_texture);
+        prog_buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
 }
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -324,19 +323,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     SDL_SetWindowResizable(GraphicsManager::instance().get_window(), 0);
     //SDL_SetRenderLogicalPresentation(renderer, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_LOGICAL_PRESENTATION_STRETCH);
 
-    switch_left_texture = IMG_LoadTexture(GraphicsManager::instance().get_renderer(), "bal.png");
-    switch_right_texture = IMG_LoadTexture(GraphicsManager::instance().get_renderer(), "jobb.png");
-    button_texture = IMG_LoadTexture(GraphicsManager::instance().get_renderer(), "button.png");
-    if (!switch_left_texture || !switch_right_texture || !button_texture)
-    {
-        SDL_Log("Nem sikerult betolteni a texturat: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
-    }
-
     SDL_SetRenderDrawBlendMode(GraphicsManager::instance().get_renderer(), SDL_BLENDMODE_BLEND);
-    SDL_SetTextureBlendMode(switch_right_texture, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureBlendMode(switch_left_texture, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureBlendMode(button_texture, SDL_BLENDMODE_BLEND);
 
     setAllButtonTextures();
     setUpMainMenu();
