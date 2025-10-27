@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+using namespace std;
+int main()
+{
+    char x[99], y[] = "aeiou";
+    int i, j;
+    cout << "szoveg: "; fgets(x, sizeof(x), stdin);
+    for (i = 0; i < strlen(y); i++)
+    {
+        for (j = 0; j < strlen(x)-1; j++)
+        {
+            if (y[i] == x[j])
+                x[j] = 'i';
+        }
+    }
+    cout << x;
+    return 0;
+}

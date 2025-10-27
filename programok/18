@@ -1,0 +1,24 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+
+int main()
+{
+    char szo[99];
+    cout << "Irj egy szot: ";
+    fgets(szo, sizeof(szo), stdin);
+    int karakterek[26];
+    memset(karakterek, 0, sizeof(karakterek));
+    for (int i = 0; i < strlen(szo)-1; i++)
+    {
+        karakterek[szo[i]-'a']++;
+    }
+    for (int i = 0; i < 26; i++)
+    {
+        if (karakterek[i] > 0)
+            cout << (char)(i+'a') << ": " << karakterek[i] << endl;
+    }
+    return 0;
+}

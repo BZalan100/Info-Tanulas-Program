@@ -1,0 +1,10 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+    int a, b;
+    cout << "Elso szam: "; cin >> a;
+    cout << "Masodik szam: "; cin >> b;
+    cout << "Osszeguk: " << a+b;
+    return 0;
+}

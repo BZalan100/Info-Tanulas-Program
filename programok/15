@@ -1,0 +1,21 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+int main()
+{
+    int n, x, osszeg=0, hossz=0; cout << "Egy szamot: "; cin >> n;
+    x = n;
+    do
+    {
+        hossz++;
+        x /= 10;
+    } while (x != 0);
+    x = n;
+    do{
+        osszeg += pow(x%10, hossz);
+        x /= 10;
+    } while (x != 0);
+    if (osszeg == n) cout << "Megfelelo szam";
+    else cout << "Nem megfelelo szam";
+    return 0;
+}

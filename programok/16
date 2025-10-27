@@ -1,0 +1,18 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+    int szam1, szam2; char muvelet;
+    cout << "Elso szam: "; cin >> szam1;
+    cout << "Muvelet: "; cin >> muvelet;
+    cout << "Masodik szam: "; cin >> szam2;
+    if (muvelet == '+')
+        cout << szam1 + szam2;
+    else if (muvelet == '-')
+        cout << szam1 - szam2;
+    else if (muvelet == '*')
+        cout << szam1 * szam2;
+    else if (muvelet == '/')
+        cout << szam1 / szam2;
+    return 0;
+}

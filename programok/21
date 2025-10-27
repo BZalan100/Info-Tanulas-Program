@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+using namespace std;
+int main()
+{
+    char x[99];
+    cout << "szoveg: ";
+    fgets(x, sizeof(x), stdin);
+    int s=1, i;
+    for (i=0; i < strlen(x)-1; i++)
+    {
+        if (x[i] == ' ') s++;
+    }
+    cout << s << " szobol all a szoveg";
+    return 0;
+}

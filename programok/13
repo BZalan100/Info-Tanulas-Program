@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <iostream>
+using namespace std;
+int main() {
+    char szo1[100], szo2[100];
+    int szam1[26] = {0}, szam2[26] = {0};
+    cout << "Elso szo: "; cin >> szo1;
+    cout << "Masodik szo: "; cin >> szo2;
+    for (int i = 0; szo1[i] != '\0'; i++) {
+        if (isalpha(szo1[i]))
+            szam1[tolower(szo1[i]) - 'a']++;
+    }
+    for (int i = 0; szo2[i] != '\0'; i++) {
+        if (isalpha(szo2[i]))
+            szam2[tolower(szo2[i]) - 'a']++;
+    }
+    for (int i = 0; i < 26; i++) {
+        if (szam1[i] != szam2[i]) {
+            cout << "Ezek a szavak nem anagramok!";
+            return 0;
+        }
+    }
+    cout << "A szavak anagramok";
+    return 0;
+}

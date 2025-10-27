@@ -1,0 +1,14 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int n;
+    cout << "Egy szamot: "; cin >> n;
+    if (n % 2 == 0)
+        cout << "Ez a szam paros";
+    else
+        cout << "Ez a szam paratlan";
+    return 0;
+}

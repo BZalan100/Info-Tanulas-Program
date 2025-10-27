@@ -1,0 +1,18 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int a, b, c;
+    cout << "Elso szam: "; cin >> a;
+    cout << "Masodik szam: "; cin >> b;
+    cout << "Harmadik szam: "; cin >> c;
+    if (b > a)
+        a = b;
+    if (c > a)
+        cout << "Legnagyobb szam: " << c;
+    else
+        cout << "Legnagyobb szam: " << a;
+    return 0;
+}

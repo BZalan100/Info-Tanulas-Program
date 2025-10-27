@@ -1,0 +1,13 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int n;
+    cout << "Egy szamot: "; cin >> n;
+    int osszeg = n * (n+1);
+    osszeg = osszeg / 2;
+    cout << "Szamok osszege 1-tol n-ig: " << osszeg;
+    return 0;
+}

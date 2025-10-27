@@ -1,0 +1,24 @@
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+
+using namespace std;
+
+int main()
+{
+    char szo[99];
+    fgets(szo, sizeof(szo), stdin);
+    int i = 0, j = strlen(szo) - 2;
+    while (i <= j)
+    {
+        if (szo[i] != szo[j])
+        {
+            cout << "Nem egy palindrom szo";
+            return 0;
+        }
+        i++;
+        j--;
+    }
+    cout << "Ez egy palindrom szo";
+    return 0;
+}

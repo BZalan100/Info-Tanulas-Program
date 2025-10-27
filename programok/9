@@ -1,0 +1,25 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+struct Diak{
+    char nev[99];
+    float media;
+} D[99];
+int main()
+{
+    int diakok_szama;
+    cout << "Hany diak van? "; cin >> diakok_szama;
+    Diak legjobb_diak;
+    for (int i = 0; i < diakok_szama; i++)
+    {
+        cout << "Diak neve: "; cin >> D[i].nev;
+        cout << "Diak mediaja: "; cin >> D[i].media;
+        if (D[i].media > legjobb_diak.media)
+        {
+            legjobb_diak.media = D[i].media;
+            strcpy(legjobb_diak.nev, D[i].nev);
+        }
+    }
+    cout << "Legjobb diak neve es mediaja: " << legjobb_diak.nev << ' ' << legjobb_diak.media;
+    return 0;
+}

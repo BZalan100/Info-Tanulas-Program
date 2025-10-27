@@ -1,0 +1,23 @@
+#include <stdlib.h>
+#include <time.h>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int szam, tip;
+    srand(time(NULL));
+    szam = rand() % 100 + 1;
+    cout << "Gondoltam egy szamra 1-tol 100-ig...";
+    do {
+        cout << "Tipped: "; cin >> tip;
+        if (tip < szam) {
+            cout << "Tul kicsi! Probald ujra!" << endl;
+        } else if (tip > szam) {
+            cout << "Tul nagy! Probald ujra!" << endl;
+        } else {
+            cout << "Igy van! A helyes szam: " << szam;
+        }
+    } while (tip != szam);
+    return 0;
+}

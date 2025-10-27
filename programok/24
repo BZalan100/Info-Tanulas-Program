@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+using namespace std;
+int main()
+{
+    char x[99];
+    cout << "szoveg: ";
+    fgets(x, sizeof(x), stdin);
+    int i, k;
+    cout << "k: ";
+    cin >> k;
+    for (i = strlen(x)-1-k; i < strlen(x)-1; i++)
+    {
+        cout << x[i];
+    }
+    return 0;
+}

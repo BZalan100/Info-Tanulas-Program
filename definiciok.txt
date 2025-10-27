@@ -1,0 +1,112 @@
+&&
+"es" jel. Ha mindket feltetel igaz kell legyen
+||
+"vagy" jel. Ha legalabb egy feltetel igaz ketto kozul
+bool
+Valtozo aminek csak 2 erteke lehet:  1 vagy 0 (true or false)
+case
+Switch-ben hasznalt eset
+char
+Valtozo amiben egy betut lehet tarolni. (Egy szo egy betu sorozat: char szo[30];)
+default
+Switch-ben az alapeset
+break
+1. Switch-ben elvalasztja az eseteket. 2. Kilep egy loopbol ideje elott.
+do
+A while-al egyutt hasznaljak (do while). Hatulrol tesztelo loop
+double
+Ugyanarra hasznaljak mint a floatot
+else
+Az if masik fele. Meghatarozza mi tortenjen ha nem teljesul a feltetel
+false
+A bool egyik erteke (hamis)
+float
+Tarolhatunk benne egy szamot ami nem feltetlen egesz
+for
+Olyan loop aminek 3 resze van: kezdo ertek, feltetel, iteraciok vegi utasitas
+if
+Feltetel ellenorzese
+int
+Egesz szamokat tarolhatunk benne, max 2 milliardig
+long
+64 bit szelessegu egesz szam (long long int)
+short
+16 bit szelessegu egesz szam (short int)
+struct
+Deklaralunk egy osszetett adattipust amibe tobb mint egy adat tarolhato
+switch
+Eset fuggvenyeben valasztunk utasitast (case)
+true
+A bool egyik erteke (igaz)
+while
+Utasitasok ismetlese amig a feltetel igaz. Ez is loopnak szamit
+cout
+Szoveg kiirasa a konzolba
+cin
+Adatok beolvasasa a felhasznalotol
+endl
+Uj sor kiirasa
+sqrt()
+Egy egesz szam negyzetgyoke, a zarojelek koze ird az int-et.
+cbrt()
+Egy egesz szam kobgyoke, a zarojelek koze ird az int-et.
+strcmp()
+Nullat ad ha szo1 ugyanaz mint szo2.
+strcpy()
+Lemasolja a szo2-t a szo1-be
+NULL
+Egy null pointer állandó (macro)
+size_t
+A sizeof operator return típusa
+strncpy()
+Átmásol valahány karaktert egyik stringből a másikba
+strcat()
+Egybe illeszt két stringet
+strlen()
+A string hossza
+strncmp()
+Összehasonlít valahány karaktert két stringben
+strchr()
+Megkeresi az első előfordulását egy betűnek egy stringben
+strrchr()
+Megkeresi az utolsó előfordulását egy betűnek egy stringben
+strstr()
+Megkeresi egy substring első előfordulását
+memchr()
+Megkeresi egy karakter első előfordulását egy array-ben
+memcmp()
+Összehasonlít két buffert
+memset()
+Megtölt egy buffert egy karakterrel
+memcpy()
+Átmásolja egyik buffert a másikba
+memmove()
+Átvisz egy buffert egy másikba
+strerror()
+Egy hibakódnak a szöveg verziója
+strtok()
+Megkeresi a következő tokent egy byte stringben
+isalnum()
+Megnézi hogy egy karakter alfanumerikus-e
+isalpha()
+Megnézi hogy egy karakter alfabetikus-e
+islower()
+Megnézi hogy egy karakter kisbetű-e
+isupper()
+Megnézi hogy egy karakter nagybetű-e
+isdigit()
+Megnézi hogy egy karakter számjegy-e
+isxdigit()
+Megnézi hogy egy karakter számjegy-e (16-os számrendszerben)
+iscntrl()
+Megnézi hogy egy karakter control karakter-e
+isgraph()
+Megnézi hogy egy karakter grafikus-e (látható)
+isspace()
+Megnézi hogy egy karakter szóköz-e
+isblank()
+Megnézi hogy egy karakter blank-e (blank = space/tab)
+tolower()
+Átalakít egy betűt kisbetűre
+toupper()
+Átalakít egy betűt nagybetűre
