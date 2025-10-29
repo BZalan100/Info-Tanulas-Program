@@ -31,7 +31,7 @@ public:
         rect = {0, 0, 0, 0};
         color_normal = {66, 66, 66, 0};
         color_hover = {180, 180, 250, 0};
-        color_pressed = {150, 150, 220, 0};
+        color_pressed = {120, 120, 120, 0};
         font = NULL;
         text = "";
         hovered = false;
@@ -120,7 +120,19 @@ public:
     void renderButton(SDL_Renderer* r)
     {
         if (texture == NULL) return;
-        color_normal.a = color_hover.a = color_pressed.a = 0; 
+        color_normal.a = color_hover.a = color_pressed.a = 0;
+        //SDL_SetTextureColorModFloat(texture, 1.0f, 0.0f, 0.0f);
+        SDL_SetTextureColorModFloat(texture, 1.0f, 1.0f, 1.0f);
+        if (pressed)
+            SDL_SetTextureColorModFloat(texture,
+                                        (float)color_pressed.r / 255.0f,
+                                        (float)color_pressed.g / 255.0f,
+                                        (float)color_pressed.b / 255.0f); 
+        else if (hovered)
+            SDL_SetTextureColorModFloat(texture,
+                                        (float)color_hover.r / 255.0f,
+                                        (float)color_hover.g / 255.0f,
+                                        (float)color_hover.b / 255.0f);     
         SDL_RenderTextureRotated(r, texture, NULL, &rect, 0.0, nullptr, flip_mode);
     }
     void hide()
