@@ -28,7 +28,7 @@ namespace colors
 
 namespace config
 {
-    constexpr short BUTTON_COUNT = 7;
+    constexpr short BUTTON_COUNT = 12;
     constexpr short DEFINITION_COUNT = 56;
     constexpr short PROGRAMS_COUNT = 24;
     constexpr std::string_view HIDDEN_TEXT = "#- ide lehet irni -#";
@@ -38,11 +38,16 @@ enum ButtonType
 {
     definitions,
     programs,
+    gamble,
     back,
     hint,
     show_colors,
     switch_left,
     switch_right,
+    black,
+    red,
+    green,
+    wheel,
 };
 
 std::array<Button, config::BUTTON_COUNT> buttons;
@@ -57,6 +62,13 @@ bool color_panel_on = false;
 std::array<std::string, config::DEFINITION_COUNT> titles, contents;
 std::array<std::string, 40> rendered_code_lines{};
 std::pair<std::string, int> hidden_line{"", 0};
+
+bool is_spinned = false;
+Uint64 spin_timer = 0;
+short roullette_winner = 0;
+short chosen_color = 0;
+short money = 100;
+std::string money_line = "";
 
 int getRandomNumber(int x)
 {
@@ -122,6 +134,7 @@ void readProgram(int x)
 
 void setUpDefinitions(int page);
 void setUpPrograms();
+void setUpGambling();
 
 void setUpMainMenu()
 {
@@ -132,6 +145,7 @@ void setUpMainMenu()
         setUpDefinitions(current_page);
         buttons[ButtonType::definitions].hide();
         buttons[ButtonType::programs].hide();
+        buttons[ButtonType::gamble].hide();
     });
     buttons[ButtonType::programs].setRect(540, 420, 250, 50);
     buttons[ButtonType::programs].setFont(GraphicsManager::instance().get_button_font());
@@ -140,6 +154,81 @@ void setUpMainMenu()
         setUpPrograms();
         buttons[ButtonType::definitions].hide();
         buttons[ButtonType::programs].hide();
+        buttons[ButtonType::gamble].hide();
+    });
+    buttons[ButtonType::gamble].setRect(540, 520, 250, 50);
+    buttons[ButtonType::gamble].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::gamble].setText("$$$");
+    buttons[ButtonType::gamble].setOnClick([](){
+        setUpGambling();
+        buttons[ButtonType::definitions].hide();
+        buttons[ButtonType::programs].hide();
+        buttons[ButtonType::gamble].hide();
+    });
+}
+
+void setUpGambling()
+{
+    money_line = "Pénz: " + std::to_string(money);
+    buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+    buttons[ButtonType::black].setRect(1000, 30, 250, 50);
+    buttons[ButtonType::black].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::black].setText("Fekete");
+    buttons[ButtonType::black].setOnClick([](){
+        if (!is_spinned && money > 0)
+        {
+            spin_timer = SDL_GetTicks();
+            is_spinned = true;
+            chosen_color = 0;
+            roullette_winner = getRandomNumber(11) / 5;
+        }
+    });
+    buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+    buttons[ButtonType::red].setRect(1000, 130, 250, 50);
+    buttons[ButtonType::red].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::red].setText("Piros");
+    buttons[ButtonType::red].setOnClick([](){
+        if (!is_spinned && money > 0)
+        {
+            spin_timer = SDL_GetTicks();
+            is_spinned = true;
+            chosen_color = 1;
+            roullette_winner = getRandomNumber(11) / 5;
+        }
+    });
+    buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
+    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+    buttons[ButtonType::green].setRect(1000, 230, 250, 50);
+    buttons[ButtonType::green].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::green].setText("Zöld");
+    buttons[ButtonType::green].setOnClick([](){
+        if (!is_spinned && money > 0)
+        {
+            spin_timer = SDL_GetTicks();
+            is_spinned = true;
+            chosen_color = 2;
+            roullette_winner = getRandomNumber(11) / 5;
+        }
+    });
+    buttons[ButtonType::back].setRect(1180, 680, 100, 40);
+    buttons[ButtonType::back].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::back].setText("Vissza");
+    buttons[ButtonType::back].setOnClick([](){
+        if (!is_spinned)
+        {
+            setUpMainMenu();
+            buttons[ButtonType::wheel].hide();
+            buttons[ButtonType::black].hide();
+            buttons[ButtonType::red].hide();
+            buttons[ButtonType::green].hide();
+            buttons[ButtonType::back].hide();
+            money_line = "";
+        }
     });
 }
 
@@ -326,14 +415,12 @@ void setUpPrograms()
 
 void setAllButtonTextures()
 {
-    buttons[ButtonType::definitions].setTexture(GraphicsManager::instance().get_button_texture());
-    buttons[ButtonType::programs].setTexture(GraphicsManager::instance().get_button_texture());
-    buttons[ButtonType::back].setTexture(GraphicsManager::instance().get_button_texture());
-    buttons[ButtonType::hint].setTexture(GraphicsManager::instance().get_button_texture());
-    buttons[ButtonType::show_colors].setTexture(GraphicsManager::instance().get_button_texture());
+    for (int i = 0; i < config::BUTTON_COUNT; i++)
+        buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
     buttons[ButtonType::switch_right].setTexture(GraphicsManager::instance().get_switch_texture());
     buttons[ButtonType::switch_left].setTexture(GraphicsManager::instance().get_switch_texture());
     buttons[ButtonType::switch_left].setFlipMode(SDL_FLIP_HORIZONTAL);
+    buttons[ButtonType::wheel].setTexture(GraphicsManager::instance().get_wheel_texture());
     for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
     for (int i = 0; i < config::PROGRAMS_COUNT + 4; i++)
@@ -436,12 +523,45 @@ void drawAllButtons()
 
 void renderAllButtons()
 {
-    for (int i = 0; i < config::BUTTON_COUNT; i++)
+    for (int i = 0; i < config::BUTTON_COUNT-1; i++)
         buttons[i].renderButton(GraphicsManager::instance().get_renderer());
     for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].renderButton(GraphicsManager::instance().get_renderer());
     for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
         prog_buttons[i].renderButton(GraphicsManager::instance().get_renderer());
+    if (is_spinned)
+    {
+        SDL_FRect source{0, 0, 588, 588};
+        SDL_FRect dest{100, 10, 588, 588}; 
+        const Uint64 now = SDL_GetTicks() - spin_timer;
+        SDL_FPoint center = {294, 294};
+        double angle = (now % 3000) / (3000.0f / 360.0f);
+        buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
+                                                &source, &dest, angle, &center);
+        if (now > 4300 + 90 * roullette_winner)
+        {
+            std::string outcome;
+            if (chosen_color == roullette_winner)
+            {
+                outcome = "Nyertél!";
+                if (chosen_color == 2) money += 10;
+                else money++;
+            }
+            else
+            {
+                outcome = "Vesztettél!";
+                money--;
+            }
+            money_line = "Pénz: " + std::to_string(money);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Rullett", outcome.c_str(), GraphicsManager::instance().get_window());
+            is_spinned = false;
+        }
+        SDL_FRect arrow_source = {250, 600, 81, 81};
+        SDL_FRect arrow_dest = {350, 610, 81, 81};
+        buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
+                                                &arrow_source, &arrow_dest);
+    }
+    else buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer());
 }
 
 SDL_AppResult SDL_AppIterate(void* appstate)
@@ -452,6 +572,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     drawAllButtons();
     for (int i = 0; i < 40; i++)
         drawLineOnScreen(rendered_code_lines[i], GraphicsManager::instance().get_code_font(), code_color, 0, 40*i);
+    if (!money_line.empty())
+        drawLineOnScreen(money_line, GraphicsManager::instance().get_code_font(), code_color, 10, 10);
     SDL_RenderPresent(GraphicsManager::instance().get_renderer());
     return SDL_APP_CONTINUE;
 }

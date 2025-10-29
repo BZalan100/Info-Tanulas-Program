@@ -117,11 +117,10 @@ public:
     {
         flip_mode = f;
     }
-    void renderButton(SDL_Renderer* r)
+    void renderButton(SDL_Renderer* r, const SDL_FRect* src = nullptr, const SDL_FRect* dest = nullptr, double angles = 0.0, const SDL_FPoint* center = nullptr)
     {
         if (texture == NULL) return;
         color_normal.a = color_hover.a = color_pressed.a = 0;
-        //SDL_SetTextureColorModFloat(texture, 1.0f, 0.0f, 0.0f);
         SDL_SetTextureColorModFloat(texture, 1.0f, 1.0f, 1.0f);
         if (pressed)
             SDL_SetTextureColorModFloat(texture,
@@ -133,7 +132,8 @@ public:
                                         (float)color_hover.r / 255.0f,
                                         (float)color_hover.g / 255.0f,
                                         (float)color_hover.b / 255.0f);     
-        SDL_RenderTextureRotated(r, texture, NULL, &rect, 0.0, nullptr, flip_mode);
+        if (!dest) SDL_RenderTextureRotated(r, texture, src, &rect, angles, center, flip_mode);
+        else SDL_RenderTextureRotated(r, texture, src, dest, angles, center, flip_mode);
     }
     void hide()
     {
