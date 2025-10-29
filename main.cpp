@@ -26,21 +26,35 @@ namespace colors
     constexpr short COLS = 6;
 }
 
-constexpr short DEFINITION_COUNT = 56;
-constexpr short PROGRAMS_COUNT = 24;
-constexpr std::string_view HIDDEN_TEXT = "#- ide lehet irni -#";
+namespace config
+{
+    constexpr short BUTTON_COUNT = 7;
+    constexpr short DEFINITION_COUNT = 56;
+    constexpr short PROGRAMS_COUNT = 24;
+    constexpr std::string_view HIDDEN_TEXT = "#- ide lehet irni -#";
+}
 
-std::array<Button, DEFINITION_COUNT> def_buttons;
-std::array<Button, PROGRAMS_COUNT+4> prog_buttons;
-Button definitions_button, programs_button, back_button,
-hint_button, show_colors_button, switch_right_button, switch_left_button;
-int current_page = 1;
+enum ButtonType
+{
+    definitions,
+    programs,
+    back,
+    hint,
+    show_colors,
+    switch_left,
+    switch_right,
+};
 
+std::array<Button, config::BUTTON_COUNT> buttons;
+std::array<Button, config::DEFINITION_COUNT> def_buttons;
+std::array<Button, config::PROGRAMS_COUNT+4> prog_buttons;
 std::array<std::array<Button, colors::COLS>, colors::ROWS> color_buttons;
+
+int current_page = 1;
 SDL_Color code_color = {0, 255, 0, 255};
 bool color_panel_on = false;
 
-std::array<std::string, DEFINITION_COUNT> titles, contents;
+std::array<std::string, config::DEFINITION_COUNT> titles, contents;
 std::array<std::string, 40> rendered_code_lines{};
 std::pair<std::string, int> hidden_line{"", 0};
 
@@ -54,7 +68,7 @@ int getRandomNumber(int x)
 void getTitlesAndContents()
 {
     std::ifstream f("definiciok.txt");
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
     {
         std::string title, content;
         getline(f, title);
@@ -103,7 +117,7 @@ void readProgram(int x)
     while (rendered_code_lines[random_index].size() < 4)
         random_index = getRandomNumber(i);
     hidden_line = {rendered_code_lines[random_index], random_index};
-    rendered_code_lines[random_index] = HIDDEN_TEXT;
+    rendered_code_lines[random_index] = config::HIDDEN_TEXT;
 }
 
 void setUpDefinitions(int page);
@@ -111,38 +125,38 @@ void setUpPrograms();
 
 void setUpMainMenu()
 {
-    definitions_button.setRect(540, 320, 250, 50);
-    definitions_button.setFont(GraphicsManager::instance().get_button_font());
-    definitions_button.setText("Definiciok");
-    definitions_button.setOnClick([](){
+    buttons[ButtonType::definitions].setRect(540, 320, 250, 50);
+    buttons[ButtonType::definitions].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::definitions].setText("Definiciok");
+    buttons[ButtonType::definitions].setOnClick([](){
         setUpDefinitions(current_page);
-        definitions_button.hide();
-        programs_button.hide();
+        buttons[ButtonType::definitions].hide();
+        buttons[ButtonType::programs].hide();
     });
-    programs_button.setRect(540, 420, 250, 50);
-    programs_button.setFont(GraphicsManager::instance().get_button_font());
-    programs_button.setText("Programok");
-    programs_button.setOnClick([](){
+    buttons[ButtonType::programs].setRect(540, 420, 250, 50);
+    buttons[ButtonType::programs].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::programs].setText("Programok");
+    buttons[ButtonType::programs].setOnClick([](){
         setUpPrograms();
-        definitions_button.hide();
-        programs_button.hide();
+        buttons[ButtonType::definitions].hide();
+        buttons[ButtonType::programs].hide();
     });
 }
 
 void setUpDefinitions(int page)
 {
-    switch_left_button.setRect(40, 40, 36, 36);
-    switch_left_button.setOnClick([](){
+    buttons[ButtonType::switch_left].setRect(40, 40, 36, 36);
+    buttons[ButtonType::switch_left].setOnClick([](){
         current_page = 1;
         setUpDefinitions(current_page);
     });
-    switch_right_button.setRect(1200, 40, 36, 36);
-    switch_right_button.setOnClick([](){
+    buttons[ButtonType::switch_right].setRect(1200, 40, 36, 36);
+    buttons[ButtonType::switch_right].setOnClick([](){
         current_page = 2;
         setUpDefinitions(current_page);
     });
 
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
     {
         def_buttons[i].setRect(85*page + 300 * (i/7) - (page-1)*window_size::WIDTH,
                                100 + 75 * (i%7),
@@ -154,22 +168,22 @@ void setUpDefinitions(int page)
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, &titles[i][0], &contents[i][0], GraphicsManager::instance().get_window());
         });
     }
-    back_button.setRect(1180, 680, 100, 40);
-    back_button.setFont(GraphicsManager::instance().get_button_font());
-    back_button.setText("Vissza");
-    back_button.setOnClick([](){
-        for (int i = 0; i < DEFINITION_COUNT; i++) def_buttons[i].hide();
-        switch_left_button.setRect(0, 0, 0, 0);
-        switch_right_button.setRect(0, 0, 0, 0);
+    buttons[ButtonType::back].setRect(1180, 680, 100, 40);
+    buttons[ButtonType::back].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::back].setText("Vissza");
+    buttons[ButtonType::back].setOnClick([](){
+        for (int i = 0; i < config::DEFINITION_COUNT; i++) def_buttons[i].hide();
+        buttons[ButtonType::switch_left].setRect(0, 0, 0, 0);
+        buttons[ButtonType::switch_right].setRect(0, 0, 0, 0);
         setUpMainMenu();
-        back_button.hide();
+        buttons[ButtonType::back].hide();
     });
 }
 
 void drawLineOnScreen(std::string& text, TTF_Font* font, SDL_Color text_color, int posx, int posy)
 {
     if (text.empty()) return;
-    if (text == HIDDEN_TEXT)
+    if (text == config::HIDDEN_TEXT)
         text_color = {255, 50, 50, 255};
     SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), text.size(), text_color);
     if (!surface)
@@ -195,7 +209,7 @@ void drawLineOnScreen(std::string& text, TTF_Font* font, SDL_Color text_color, i
 
 void hidePrograms()
 {
-    for (int i = 0; i < PROGRAMS_COUNT+4; i++)
+    for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
         prog_buttons[i].hide();
 }
 
@@ -225,10 +239,10 @@ void hideColorButtons()
 
 void setUpShowColorsButton()
 {
-    show_colors_button.setRect(1180, 630, 100, 40);
-    show_colors_button.setFont(GraphicsManager::instance().get_button_font());
-    show_colors_button.setText("Szinek");
-    show_colors_button.setOnClick([](){
+    buttons[ButtonType::show_colors].setRect(1180, 630, 100, 40);
+    buttons[ButtonType::show_colors].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::show_colors].setText("Szinek");
+    buttons[ButtonType::show_colors].setOnClick([](){
         if (!color_panel_on)
             setUpColorButtons();  
         else
@@ -236,114 +250,135 @@ void setUpShowColorsButton()
     });
 }
 
-void setUpPrograms()
+void setDifficultyNames()
 {
     prog_buttons[0].setText("Easy");
     prog_buttons[7].setText("Medium");
     prog_buttons[14].setText("Hacker");
     prog_buttons[21].setText("String");
-    for (int i = 0; i < PROGRAMS_COUNT+4; i++)
-    {
-        prog_buttons[i].setRect(100 + 300 * (i/7), 100 + 75 * (i%7), 200, 40);
-        prog_buttons[i].setFont(GraphicsManager::instance().get_button_font());
-        std::string program_text = std::to_string(i - i/7);
-        if (i%7 != 0)
-        {
-            prog_buttons[i].setText(program_text);
-            prog_buttons[i].setOnClick([i](){
-                SDL_StartTextInput(GraphicsManager::instance().get_window());
-                setUpShowColorsButton();
-                getProgramRequest(i - i/7);
-                readProgram(i - i/7);
-                hidePrograms();     
-                back_button.setOnClick([](){
-                    hideColorButtons();
-                    show_colors_button.hide();
-                    hint_button.hide();
-                    rendered_code_lines = {};
-                    setUpPrograms();
-                });
-                hint_button.setRect(1180, 580, 100, 40);
-                hint_button.setFont(GraphicsManager::instance().get_button_font());
-                hint_button.setText("Mutasd");
-                hint_button.setOnClick([](){
-                    SDL_StopTextInput(GraphicsManager::instance().get_window());
-                    const char* p = hidden_line.first.c_str();
-                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Megoldás", p, GraphicsManager::instance().get_window());
-                    rendered_code_lines[hidden_line.second] = hidden_line.first;
-                    hint_button.hide();
-                });
-            });
-        }
-    }
-    back_button.setRect(1180, 680, 100, 40);
-    back_button.setFont(GraphicsManager::instance().get_button_font());
-    back_button.setText("Vissza");
-    back_button.setOnClick([](){
+}
+
+void setUpBackButtonInCoding()
+{
+    buttons[ButtonType::back].setOnClick([](){
+        hideColorButtons();
+        buttons[ButtonType::show_colors].hide();
+        buttons[ButtonType::hint].hide();
+        rendered_code_lines = {};
+        setUpPrograms();
+    });
+}
+
+void setUpHintButton()
+{
+    buttons[ButtonType::hint].setRect(1180, 580, 100, 40);
+    buttons[ButtonType::hint].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::hint].setText("Mutasd");
+    buttons[ButtonType::hint].setOnClick([](){
+        SDL_StopTextInput(GraphicsManager::instance().get_window());
+        const char* p = hidden_line.first.c_str();
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Megoldás", p, GraphicsManager::instance().get_window());
+        rendered_code_lines[hidden_line.second] = hidden_line.first;
+        buttons[ButtonType::hint].hide();
+    });
+}
+
+void setUpProgramButton(size_t index)
+{
+    std::string program_text = std::to_string(index - index/7);
+    prog_buttons[index].setText(program_text);
+    prog_buttons[index].setOnClick([index](){
+        SDL_StartTextInput(GraphicsManager::instance().get_window());
+        setUpShowColorsButton();
+        getProgramRequest(index - index/7);
+        readProgram(index - index/7);
+        hidePrograms();     
+        setUpBackButtonInCoding();
+        setUpHintButton();
+    });
+}
+
+void setUpBackButtonInPrograms()
+{
+    buttons[ButtonType::back].setRect(1180, 680, 100, 40);
+    buttons[ButtonType::back].setFont(GraphicsManager::instance().get_button_font());
+    buttons[ButtonType::back].setText("Vissza");
+    buttons[ButtonType::back].setOnClick([](){
         SDL_StopTextInput(GraphicsManager::instance().get_window());
         setUpMainMenu();
         hidePrograms();
-        back_button.hide();
+        buttons[ButtonType::back].hide();
     });
+}
+
+void setUpPrograms()
+{
+    setDifficultyNames();
+    for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
+    {
+        prog_buttons[i].setRect(100 + 300 * (i/7), 100 + 75 * (i%7), 200, 40);
+        prog_buttons[i].setFont(GraphicsManager::instance().get_button_font());
+        if (i%7 != 0)
+            setUpProgramButton(i);
+    }
+    setUpBackButtonInPrograms();
 }
 
 void setAllButtonTextures()
 {
-    definitions_button.setTexture(GraphicsManager::instance().get_button_texture());
-    programs_button.setTexture(GraphicsManager::instance().get_button_texture());
-    back_button.setTexture(GraphicsManager::instance().get_button_texture());
-    hint_button.setTexture(GraphicsManager::instance().get_button_texture());
-    show_colors_button.setTexture(GraphicsManager::instance().get_button_texture());
-    switch_right_button.setTexture(GraphicsManager::instance().get_switch_texture());
-    switch_left_button.setTexture(GraphicsManager::instance().get_switch_texture());
-    switch_left_button.setFlipMode(SDL_FLIP_HORIZONTAL);
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    buttons[ButtonType::definitions].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::programs].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::back].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::hint].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::show_colors].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::switch_right].setTexture(GraphicsManager::instance().get_switch_texture());
+    buttons[ButtonType::switch_left].setTexture(GraphicsManager::instance().get_switch_texture());
+    buttons[ButtonType::switch_left].setFlipMode(SDL_FLIP_HORIZONTAL);
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
-    for (int i = 0; i < PROGRAMS_COUNT + 4; i++)
+    for (int i = 0; i < config::PROGRAMS_COUNT + 4; i++)
         prog_buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
 }
 
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
+bool InitializeAll()
 {
-    SDL_SetAppMetadata("Tanulas", "1.0", "tanulas");
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("SDL inicializalas hiba: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
+        return 0;
     }
     if (!TTF_Init())
     {
         SDL_Log("Nem sikerult inicializalni a fontot: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
+        return 0;
     }
     if (!GraphicsManager::instance().initialize(window_size::WIDTH, window_size::HEIGHT))
     {
-        return SDL_APP_FAILURE;
+        return 0;
     }
+    return 1;
+}
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
+{
+    if (!InitializeAll())
+        return SDL_APP_FAILURE;
+    SDL_SetAppMetadata("Tanulas", "1.0", "tanulas");
     SDL_SetWindowResizable(GraphicsManager::instance().get_window(), 0);
-    //SDL_SetRenderLogicalPresentation(renderer, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_LOGICAL_PRESENTATION_STRETCH);
-
     SDL_SetRenderDrawBlendMode(GraphicsManager::instance().get_renderer(), SDL_BLENDMODE_BLEND);
-
     setAllButtonTextures();
     setUpMainMenu();
     getTitlesAndContents();  
-
     return SDL_APP_CONTINUE;
 }
 
 void handleAllButtons(SDL_Event* event)
 {
-    definitions_button.handleEvent(*event);
-    programs_button.handleEvent(*event);
-    back_button.handleEvent(*event);
-    hint_button.handleEvent(*event);
-    show_colors_button.handleEvent(*event);
-    switch_right_button.handleEvent(*event);
-    switch_left_button.handleEvent(*event);
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    for (int i = 0; i < config::BUTTON_COUNT; i++)
+        buttons[i].handleEvent(*event);
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].handleEvent(*event);
-    for (int i = 0; i < PROGRAMS_COUNT + 4; i++)
+    for (int i = 0; i < config::PROGRAMS_COUNT + 4; i++)
         prog_buttons[i].handleEvent(*event);
     for (int i = 0; i < colors::ROWS; i++)
         for (int j = 0; j < colors::COLS; j++)
@@ -356,7 +391,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
         return SDL_APP_SUCCESS;
     else if (event->type == SDL_EVENT_TEXT_INPUT)
     {
-        if (rendered_code_lines[hidden_line.second] == HIDDEN_TEXT)
+        if (rendered_code_lines[hidden_line.second] == config::HIDDEN_TEXT)
             rendered_code_lines[hidden_line.second] = "";
         rendered_code_lines[hidden_line.second] += event->text.text;
     }
@@ -368,7 +403,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
         {
             if (rendered_code_lines[hidden_line.second].size() > 0)
             {
-                if (rendered_code_lines[hidden_line.second] == HIDDEN_TEXT)
+                if (rendered_code_lines[hidden_line.second] == config::HIDDEN_TEXT)
                     rendered_code_lines[hidden_line.second] = "";
                 else rendered_code_lines[hidden_line.second].pop_back();
             }
@@ -379,7 +414,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
             const char* p = hidden_line.first.c_str();
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Megoldás", p, GraphicsManager::instance().get_window());
             rendered_code_lines[hidden_line.second] = hidden_line.first;
-            hint_button.hide();
+            buttons[ButtonType::hint].hide();
         }
     }
     handleAllButtons(event);
@@ -388,16 +423,11 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 
 void drawAllButtons()
 {
-    definitions_button.draw(GraphicsManager::instance().get_renderer());
-    programs_button.draw(GraphicsManager::instance().get_renderer());
-    back_button.draw(GraphicsManager::instance().get_renderer());
-    hint_button.draw(GraphicsManager::instance().get_renderer());
-    show_colors_button.draw(GraphicsManager::instance().get_renderer());
-    switch_left_button.draw(GraphicsManager::instance().get_renderer());
-    switch_right_button.draw(GraphicsManager::instance().get_renderer());
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    for (int i = 0; i < config::BUTTON_COUNT; i++)
+        buttons[i].draw(GraphicsManager::instance().get_renderer());
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].draw(GraphicsManager::instance().get_renderer());
-    for (int i = 0; i < PROGRAMS_COUNT+4; i++)
+    for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
         prog_buttons[i].draw(GraphicsManager::instance().get_renderer());
     for (int i = 0; i < colors::ROWS; i++)
         for (int j = 0; j < colors::COLS; j++)
@@ -406,16 +436,11 @@ void drawAllButtons()
 
 void renderAllButtons()
 {
-    definitions_button.renderButton(GraphicsManager::instance().get_renderer());
-    programs_button.renderButton(GraphicsManager::instance().get_renderer());
-    back_button.renderButton(GraphicsManager::instance().get_renderer());
-    hint_button.renderButton(GraphicsManager::instance().get_renderer());
-    show_colors_button.renderButton(GraphicsManager::instance().get_renderer());
-    switch_left_button.renderButton(GraphicsManager::instance().get_renderer());
-    switch_right_button.renderButton(GraphicsManager::instance().get_renderer());
-    for (int i = 0; i < DEFINITION_COUNT; i++)
+    for (int i = 0; i < config::BUTTON_COUNT; i++)
+        buttons[i].renderButton(GraphicsManager::instance().get_renderer());
+    for (int i = 0; i < config::DEFINITION_COUNT; i++)
         def_buttons[i].renderButton(GraphicsManager::instance().get_renderer());
-    for (int i = 0; i < PROGRAMS_COUNT+4; i++)
+    for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
         prog_buttons[i].renderButton(GraphicsManager::instance().get_renderer());
 }
 
