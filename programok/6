@@ -10,7 +10,7 @@ int main()
     char szo[99];
     cout << "Irj egy szot: ";
     fgets(szo, sizeof(szo), stdin);
-    for (int i = 0; i < strlen(szo); i++)
+    for (int i = 0; i < strlen(szo) - 1; i++)
     {
         if (szo[i] == 'a' || szo[i] == 'e' || szo[i] == 'i' ||
             szo[i] == 'o' || szo[i] == 'u') maganhangzok++;

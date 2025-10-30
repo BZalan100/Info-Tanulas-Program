@@ -79,6 +79,24 @@ int getRandomNumber(int x)
     return distInt(rng);
 }
 
+void readProgram(int x)
+{
+    std::string index = std::to_string(x);
+    std::ifstream f("programok/"+index);
+    std::string line;
+    int i = 0;
+    if (!f.is_open()) {
+    SDL_Log("Failed to open file!");
+    return;}
+    while (std::getline(f, line))
+        rendered_code_lines[i++] = line;
+    int random_index = getRandomNumber(i);
+    while (rendered_code_lines[random_index].size() < 4)
+        random_index = getRandomNumber(i);
+    hidden_line = {rendered_code_lines[random_index], random_index};
+    rendered_code_lines[random_index] = config::HIDDEN_TEXT;
+}
+
 void getTitlesAndContents()
 {
     std::ifstream f("definiciok.txt");
@@ -116,37 +134,19 @@ void setUpColorButtons()
     color_panel_on = true;
 }
 
-void readProgram(int x)
-{
-    std::string index = std::to_string(x);
-    std::ifstream f("programok/"+index);
-    std::string line;
-    int i = 0;
-    if (!f.is_open()) {
-    SDL_Log("Failed to open file!");
-    return;}
-    while (std::getline(f, line))
-        rendered_code_lines[i++] = line;
-    int random_index = getRandomNumber(i);
-    while (rendered_code_lines[random_index].size() < 4)
-        random_index = getRandomNumber(i);
-    hidden_line = {rendered_code_lines[random_index], random_index};
-    rendered_code_lines[random_index] = config::HIDDEN_TEXT;
-}
-
 void setUpDefinitions(int page);
 void setUpPrograms();
 void setUpGambling();
 
-void setUpMainMenu()
+void setUpLogo()
 {
-    money_timer = SDL_GetTicks();
-    money_line = "Pénz: " + std::to_string(money);
-
     buttons[ButtonType::logo].setRect(window_size::WIDTH / 2 - 146, 50, 293, 258);
     buttons[ButtonType::logo].setColor(255, 255, 255, 0, ColorRole::color_hover);
     buttons[ButtonType::logo].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+}
 
+void setUpDefinitionButton()
+{
     buttons[ButtonType::definitions].setRect(window_size::WIDTH / 2 - 125, 400, 250, 50);
     buttons[ButtonType::definitions].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::definitions].setText("Definiciok");
@@ -158,6 +158,10 @@ void setUpMainMenu()
         buttons[ButtonType::programs].hide();
         buttons[ButtonType::gamble].hide();
     });
+}
+
+void setUpProgramListButton()
+{
     buttons[ButtonType::programs].setRect(window_size::WIDTH / 2 - 125, 475, 250, 50);
     buttons[ButtonType::programs].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::programs].setText("Programok");
@@ -169,6 +173,10 @@ void setUpMainMenu()
         buttons[ButtonType::programs].hide();
         buttons[ButtonType::gamble].hide();
     });
+}
+
+void setUpGamblingButton()
+{
     buttons[ButtonType::gamble].setRect(window_size::WIDTH / 2 - 125, 550, 250, 50);
     buttons[ButtonType::gamble].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::gamble].setText("$$$");
@@ -181,11 +189,26 @@ void setUpMainMenu()
     });
 }
 
-void setUpGambling()
+void setUpMainMenu()
+{
+    money_timer = SDL_GetTicks();
+    money_line = "Pénz: " + std::to_string(money);
+
+    setUpLogo();
+    setUpDefinitionButton();
+    setUpProgramListButton();
+    setUpGamblingButton();
+}
+
+void setUpWheel()
 {
     buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
     buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
     buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+}
+
+void setUpBettingOnBlack()
+{
     buttons[ButtonType::black].setRect(1000, 30, 250, 50);
     buttons[ButtonType::black].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::black].setText("Fekete");
@@ -198,9 +221,10 @@ void setUpGambling()
             roullette_winner = getRandomNumber(11) / 5;
         }
     });
-    buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
-    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
-    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+}
+
+void setUpBettingOnRed()
+{
     buttons[ButtonType::red].setRect(1000, 130, 250, 50);
     buttons[ButtonType::red].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::red].setText("Piros");
@@ -213,9 +237,10 @@ void setUpGambling()
             roullette_winner = getRandomNumber(11) / 5;
         }
     });
-    buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
-    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
-    buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+}
+
+void setUpBettingOnGreen()
+{
     buttons[ButtonType::green].setRect(1000, 230, 250, 50);
     buttons[ButtonType::green].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::green].setText("Zöld");
@@ -228,6 +253,10 @@ void setUpGambling()
             roullette_winner = getRandomNumber(11) / 5;
         }
     });
+}
+
+void setUpBackButtonInGambling()
+{
     buttons[ButtonType::back].setRect(1180, 680, 100, 40);
     buttons[ButtonType::back].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::back].setText("Vissza");
@@ -242,6 +271,15 @@ void setUpGambling()
             buttons[ButtonType::back].hide();
         }
     });
+}
+
+void setUpGambling()
+{
+    setUpWheel();
+    setUpBettingOnBlack();
+    setUpBettingOnRed();
+    setUpBettingOnGreen();
+    setUpBackButtonInGambling();
 }
 
 void setUpDefinitions(int page)
@@ -534,6 +572,39 @@ void drawAllButtons()
             color_buttons[i][j].draw(GraphicsManager::instance().get_renderer());
 }
 
+void animateSpin()
+{
+    SDL_FRect source{0, 0, 588, 588};
+    SDL_FRect dest{100, 10, 588, 588}; 
+    const Uint64 now = SDL_GetTicks() - spin_timer;
+    SDL_FPoint center = {294, 294};
+    double angle = (now % 3000) / (3000.0f / 360.0f);
+    buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
+                                            &source, &dest, angle, &center);
+    if (now > 4300 + 90 * roullette_winner)
+    {
+        std::string outcome;
+        if (chosen_color == roullette_winner)
+        {
+            outcome = "Nyertél!";
+            if (chosen_color == 2) money += 10;
+            else money++;
+        }
+        else
+        {
+            outcome = "Vesztettél!";
+            money--;
+        }
+        money_line = "Pénz: " + std::to_string(money);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Rullett", outcome.c_str(), GraphicsManager::instance().get_window());
+        is_spinned = false;
+    }
+    SDL_FRect arrow_source = {250, 600, 81, 81};
+    SDL_FRect arrow_dest = {350, 610, 81, 81};
+    buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
+                                            &arrow_source, &arrow_dest);
+}
+
 void renderAllButtons()
 {
     for (int i = 0; i < config::BUTTON_COUNT-1; i++)
@@ -543,37 +614,7 @@ void renderAllButtons()
     for (int i = 0; i < config::PROGRAMS_COUNT+4; i++)
         prog_buttons[i].renderButton(GraphicsManager::instance().get_renderer());
     if (is_spinned)
-    {
-        SDL_FRect source{0, 0, 588, 588};
-        SDL_FRect dest{100, 10, 588, 588}; 
-        const Uint64 now = SDL_GetTicks() - spin_timer;
-        SDL_FPoint center = {294, 294};
-        double angle = (now % 3000) / (3000.0f / 360.0f);
-        buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
-                                                &source, &dest, angle, &center);
-        if (now > 4300 + 90 * roullette_winner)
-        {
-            std::string outcome;
-            if (chosen_color == roullette_winner)
-            {
-                outcome = "Nyertél!";
-                if (chosen_color == 2) money += 10;
-                else money++;
-            }
-            else
-            {
-                outcome = "Vesztettél!";
-                money--;
-            }
-            money_line = "Pénz: " + std::to_string(money);
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Rullett", outcome.c_str(), GraphicsManager::instance().get_window());
-            is_spinned = false;
-        }
-        SDL_FRect arrow_source = {250, 600, 81, 81};
-        SDL_FRect arrow_dest = {350, 610, 81, 81};
-        buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer(),
-                                                &arrow_source, &arrow_dest);
-    }
+        animateSpin();
     else buttons[ButtonType::wheel].renderButton(GraphicsManager::instance().get_renderer());
 }
 

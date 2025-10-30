@@ -1,59 +1,59 @@
 &&
-"es" jel. Ha mindket feltetel igaz kell legyen
+"és" jel. Ha mindkét feltétel igaz kell legyen
 ||
-"vagy" jel. Ha legalabb egy feltetel igaz ketto kozul
+"vagy" jel. Ha legalább egy feltétel igaz kettő közül
 bool
-Valtozo aminek csak 2 erteke lehet:  1 vagy 0 (true or false)
+Változó típus aminek csak 2 értéke lehet:  1 vagy 0 (true or false)
 case
-Switch-ben hasznalt eset
+Switch-ben használt eset
 char
-Valtozo amiben egy betut lehet tarolni. (Egy szo egy betu sorozat: char szo[30];)
+Változó típus amiben egy betűt lehet tárolni. (Egy szó egy betű sorozat: char szo[30];)
 default
 Switch-ben az alapeset
 break
-1. Switch-ben elvalasztja az eseteket. 2. Kilep egy loopbol ideje elott.
+1. Switch-ben elválasztja az eseteket. 2. Kilép egy loopból ideje előtt.
 do
-A while-al egyutt hasznaljak (do while). Hatulrol tesztelo loop
+A while-al együtt használjak (do while). Hátúlról tesztelő loop
 double
-Ugyanarra hasznaljak mint a floatot
+Ugyanarra használják mint a floatot
 else
-Az if masik fele. Meghatarozza mi tortenjen ha nem teljesul a feltetel
+Az if másik fele. Meghatározza mi történjen ha nem teljesül a feltétel
 false
-A bool egyik erteke (hamis)
+A bool egyik értéke (hamis)
 float
-Tarolhatunk benne egy szamot ami nem feltetlen egesz
+Tárolhatunk benne egy számot ami nem feltétlen egész
 for
-Olyan loop aminek 3 resze van: kezdo ertek, feltetel, iteraciok vegi utasitas
+Olyan loop aminek 3 része van: kezdő érték, feltétel, iterációk végi utasítás
 if
-Feltetel ellenorzese
+Feltétel ellenőrzése
 int
-Egesz szamokat tarolhatunk benne, max 2 milliardig
+Egész számokat tárolhatunk benne, max 2 milliárdig
 long
-64 bit szelessegu egesz szam (long long int)
+64 bit szélességű egész szám (long long int)
 short
-16 bit szelessegu egesz szam (short int)
+16 bit szélességű egész szám (short int)
 struct
-Deklaralunk egy osszetett adattipust amibe tobb mint egy adat tarolhato
+Deklarálunk egy összetett adattípust amibe több mint egy fajta adat tárolható
 switch
-Eset fuggvenyeben valasztunk utasitast (case)
+Eset függvényében választunk utasítást (case)
 true
-A bool egyik erteke (igaz)
+A bool egyik értéke (igaz)
 while
-Utasitasok ismetlese amig a feltetel igaz. Ez is loopnak szamit
+Utasítások ismétlése amíg a feltétel igaz. Ez is loopnak számít
 cout
-Szoveg kiirasa a konzolba
+Szöveg kiírása a konzolba
 cin
-Adatok beolvasasa a felhasznalotol
+Adatok beolvasása a felhasználótól
 endl
-Uj sor kiirasa
+Új sor kiírása
 sqrt()
-Egy egesz szam negyzetgyoke, a zarojelek koze ird az int-et.
+Egy egész szám négyzetgyöke, a zárójelek közé írd az int-et.
 cbrt()
-Egy egesz szam kobgyoke, a zarojelek koze ird az int-et.
+Egy egész szám köbgyöke, a zárójelek közé írd az int-et.
 strcmp()
-Nullat ad ha szo1 ugyanaz mint szo2.
+Nullát ad ha szo1 ugyanaz mint szo2.
 strcpy()
-Lemasolja a szo2-t a szo1-be
+Lemásolja a szo2-t a szo1-be
 NULL
 Egy null pointer állandó (macro)
 size_t
