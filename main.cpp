@@ -28,7 +28,7 @@ namespace colors
 
 namespace config
 {
-    constexpr short BUTTON_COUNT = 12;
+    constexpr short BUTTON_COUNT = 13;
     constexpr short DEFINITION_COUNT = 56;
     constexpr short PROGRAMS_COUNT = 24;
     constexpr std::string_view HIDDEN_TEXT = "#- ide lehet irni -#";
@@ -44,6 +44,7 @@ enum ButtonType
     show_colors,
     switch_left,
     switch_right,
+    logo,
     black,
     red,
     green,
@@ -67,8 +68,9 @@ bool is_spinned = false;
 Uint64 spin_timer = 0;
 short roullette_winner = 0;
 short chosen_color = 0;
-short money = 100;
+short money = 3;
 std::string money_line = "";
+Uint64 money_timer = 0;
 
 int getRandomNumber(int x)
 {
@@ -138,29 +140,41 @@ void setUpGambling();
 
 void setUpMainMenu()
 {
-    buttons[ButtonType::definitions].setRect(540, 320, 250, 50);
+    money_timer = SDL_GetTicks();
+    money_line = "Pénz: " + std::to_string(money);
+
+    buttons[ButtonType::logo].setRect(window_size::WIDTH / 2 - 146, 50, 293, 258);
+    buttons[ButtonType::logo].setColor(255, 255, 255, 0, ColorRole::color_hover);
+    buttons[ButtonType::logo].setColor(255, 255, 255, 0, ColorRole::color_pressed);
+
+    buttons[ButtonType::definitions].setRect(window_size::WIDTH / 2 - 125, 400, 250, 50);
     buttons[ButtonType::definitions].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::definitions].setText("Definiciok");
     buttons[ButtonType::definitions].setOnClick([](){
         setUpDefinitions(current_page);
+        money_line = "";
+        buttons[ButtonType::logo].hide();
         buttons[ButtonType::definitions].hide();
         buttons[ButtonType::programs].hide();
         buttons[ButtonType::gamble].hide();
     });
-    buttons[ButtonType::programs].setRect(540, 420, 250, 50);
+    buttons[ButtonType::programs].setRect(window_size::WIDTH / 2 - 125, 475, 250, 50);
     buttons[ButtonType::programs].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::programs].setText("Programok");
     buttons[ButtonType::programs].setOnClick([](){
         setUpPrograms();
+        money_line = "";
+        buttons[ButtonType::logo].hide();
         buttons[ButtonType::definitions].hide();
         buttons[ButtonType::programs].hide();
         buttons[ButtonType::gamble].hide();
     });
-    buttons[ButtonType::gamble].setRect(540, 520, 250, 50);
+    buttons[ButtonType::gamble].setRect(window_size::WIDTH / 2 - 125, 550, 250, 50);
     buttons[ButtonType::gamble].setFont(GraphicsManager::instance().get_button_font());
     buttons[ButtonType::gamble].setText("$$$");
     buttons[ButtonType::gamble].setOnClick([](){
         setUpGambling();
+        buttons[ButtonType::logo].hide();
         buttons[ButtonType::definitions].hide();
         buttons[ButtonType::programs].hide();
         buttons[ButtonType::gamble].hide();
@@ -169,7 +183,6 @@ void setUpMainMenu()
 
 void setUpGambling()
 {
-    money_line = "Pénz: " + std::to_string(money);
     buttons[ButtonType::wheel].setRect(100, 10, 588, 682);
     buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_hover);
     buttons[ButtonType::wheel].setColor(255, 255, 255, 0, ColorRole::color_pressed);
@@ -227,7 +240,6 @@ void setUpGambling()
             buttons[ButtonType::red].hide();
             buttons[ButtonType::green].hide();
             buttons[ButtonType::back].hide();
-            money_line = "";
         }
     });
 }
@@ -417,6 +429,7 @@ void setAllButtonTextures()
 {
     for (int i = 0; i < config::BUTTON_COUNT; i++)
         buttons[i].setTexture(GraphicsManager::instance().get_button_texture());
+    buttons[ButtonType::logo].setTexture(GraphicsManager::instance().get_logo_texture());
     buttons[ButtonType::switch_right].setTexture(GraphicsManager::instance().get_switch_texture());
     buttons[ButtonType::switch_left].setTexture(GraphicsManager::instance().get_switch_texture());
     buttons[ButtonType::switch_left].setFlipMode(SDL_FLIP_HORIZONTAL);
@@ -566,14 +579,22 @@ void renderAllButtons()
 
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
+    Uint64 current_time = SDL_GetTicks();
+    if (current_time - money_timer > 300000)
+    {
+        money++;
+        money_timer = current_time;
+        money_line = "Pénz: " + std::to_string(money);
+    }
     SDL_SetRenderDrawColor(GraphicsManager::instance().get_renderer(), 33, 33, 33, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(GraphicsManager::instance().get_renderer());
+    SDL_RenderTexture(GraphicsManager::instance().get_renderer(),
+                      GraphicsManager::instance().get_background_texture(), nullptr, nullptr);
     renderAllButtons();
     drawAllButtons();
     for (int i = 0; i < 40; i++)
         drawLineOnScreen(rendered_code_lines[i], GraphicsManager::instance().get_code_font(), code_color, 0, 40*i);
-    if (!money_line.empty())
-        drawLineOnScreen(money_line, GraphicsManager::instance().get_code_font(), code_color, 10, 10);
+    drawLineOnScreen(money_line, GraphicsManager::instance().get_code_font(), code_color, 10, 10);
     SDL_RenderPresent(GraphicsManager::instance().get_renderer());
     return SDL_APP_CONTINUE;
 }
